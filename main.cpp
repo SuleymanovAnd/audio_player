@@ -1,6 +1,7 @@
 #include <iostream>
 #include <ctime>
 #include <cstdlib>
+#include <limits>
 
 
 
@@ -39,8 +40,8 @@ class Player {
     bool pauseSong = false;
    static void playing (Track* Trk){
         std::cout << "Now playing: " << Trk->getNameTrack () << " || " << Trk->getDateOfCreation().tm_year
-                  << "/" << Trk->getDateOfCreation().tm_mon << " || " << Trk->getDuration () /60 << "min "
-                  << Trk->getDuration () %60 << "sec\n";
+                  << "/" << Trk->getDateOfCreation().tm_mon << " || " << Trk->getDuration () /60 << " min. "
+                  << Trk->getDuration () %60 << " sec.\n";
     }
 
 public:
@@ -50,7 +51,8 @@ public:
            playingSong = true;
            std::cout << "Enter band and song name: ";
            std::string nameOfSong;
-           getline(std::cin, nameOfSong);
+           {std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+           getline(std::cin, nameOfSong);}
            if (nameOfSong == firstTrk->getNameTrack()) {
                playing(firstTrk);
            } else if (nameOfSong == secondTrk->getNameTrack()) {
@@ -61,7 +63,8 @@ public:
                playing (fourthTrk);
            } else {std::cout << "This track is not found";}
 
-       }
+       } else  if (pauseSong) {pauseSong = false;} // снимаем с паузы
+
     };
 
    void pause (){
@@ -101,11 +104,13 @@ public:
 };
 
 int main() {
-    std::cout << ": ";
+
     std::string cmd;
     Player* SonyWalkman = new Player ();
     while (cmd != "exit"){
+        std::cout << ": ";
         std::cin>>cmd;
+
 
         if (cmd == "play"){
             SonyWalkman->play();
